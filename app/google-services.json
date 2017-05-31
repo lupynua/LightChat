@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "289132371913",
+    "firebase_url": "https://lightchat-c9ab3.firebaseio.com",
+    "project_id": "lightchat-c9ab3",
+    "storage_bucket": "lightchat-c9ab3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:289132371913:android:19de8fbc75609520",
+        "android_client_info": {
+          "package_name": "com.liubomyr.opanovych.lightchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "289132371913-i856e7bjis0j00nf1k373f5ubt5615n7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.liubomyr.opanovych.lightchat",
+            "certificate_hash": "afe44675094bc1c0e3781a2e5ea79d65b01dafcc"
+          }
+        },
+        {
+          "client_id": "289132371913-og515sbr21cuf71vp6h3um3t9btoadaj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrFyEH6hNG6oHOgEVYRuimjH4iyT_EzDg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "289132371913-og515sbr21cuf71vp6h3um3t9btoadaj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
