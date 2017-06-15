@@ -9,9 +9,14 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.liubomyr.opanovych.lightchat.LightChatMainApp;
 import com.liubomyr.opanovych.lightchat.R;
 import com.liubomyr.opanovych.lightchat.events.PushNotificationEvent;
+import com.liubomyr.opanovych.lightchat.models.Chat;
+import com.liubomyr.opanovych.lightchat.models.User;
+import com.liubomyr.opanovych.lightchat.models.Users;
 import com.liubomyr.opanovych.lightchat.ui.activities.ChatActivity;
 import com.liubomyr.opanovych.lightchat.utils.Constants;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -21,74 +26,46 @@ import org.greenrobot.eventbus.EventBus;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
-    private static final String TAG = "MyFirebaseMsgService";
+    private static final String TAG = "FirebaseMessagingServce";
 
-    /**
-     * Called when message is received.
-     *
-     * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
-     */
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(TAG, "From: " + remoteMessage.getFrom());
+        String notificationTitle = null, notificationBody = null;
 
-        // Check if message contains a data payload.
-        if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-
-            String title = remoteMessage.getData().get("title");
-            String message = remoteMessage.getData().get("text");
-            String username = remoteMessage.getData().get("username");
-            String uid = remoteMessage.getData().get("uid");
-            String fcmToken = remoteMessage.getData().get("fcm_token");
-
-            // Don't show notification if chat activity is open.
-            if (!LightChatMainApp.isChatActivityOpen()) {
-                sendNotification(title,
-                        message,
-                        username,
-                        uid,
-                        fcmToken);
-            } else {
-                EventBus.getDefault().post(new PushNotificationEvent(title,
-                        message,
-                        username,
-                        uid,
-                        fcmToken));
-            }
+        // Check if message contains a notification payload.
+        if (remoteMessage.getNotification() != null) {
+            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            notificationTitle = remoteMessage.getNotification().getTitle();
+            notificationBody = remoteMessage.getNotification().getBody();
         }
+        String rcver = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseMessaging.getInstance().subscribeToTopic(rcver);
+
+        // Also if you intend on generating your own notifications as a result of a received FCM
+        // message, here is where that should be initiated. See sendNotification method below.
+        //if (rcver.equals(notificationTitle)) {
+            //sendNotification(notificationTitle, notificationBody);
+        //}
     }
 
-    /**
-     * Create and show a simple notification containing the received FCM message.
-     */
-    private void sendNotification(String title,
-                                  String message,
-                                  String receiver,
-                                  String receiverUid,
-                                  String firebaseToken) {
+
+    private void sendNotification(String notificationTitle, String notificationBody) {
         Intent intent = new Intent(this, ChatActivity.class);
-        intent.putExtra(Constants.ARG_RECEIVER, receiver);
-        intent.putExtra(Constants.ARG_RECEIVER_UID, receiverUid);
-        intent.putExtra(Constants.ARG_FIREBASE_TOKEN, firebaseToken);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_messaging)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder notificationBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+                .setAutoCancel(true)   //Automatically delete the notification
+                .setSmallIcon(R.drawable.ic_messaging) //Notification icon
+                .setContentIntent(pendingIntent)
+                .setContentText(notificationBody)
+                .setSound(defaultSoundUri);
 
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0, notificationBuilder.build());
     }

@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.liubomyr.opanovych.lightchat.R;
 import com.liubomyr.opanovych.lightchat.core.chat.ChatContract;
 import com.liubomyr.opanovych.lightchat.core.chat.ChatPresenter;
@@ -58,6 +59,10 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        String rcver = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseMessaging.getInstance().subscribeToTopic(rcver);
+
+
     }
 
     @Override
@@ -96,6 +101,8 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
         mChatPresenter = new ChatPresenter(this);
         mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),
                 getArguments().getString(Constants.ARG_RECEIVER_UID));
+
+
     }
 
     @Override
@@ -114,12 +121,13 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
         String sender = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String receiverFirebaseToken = getArguments().getString(Constants.ARG_FIREBASE_TOKEN);
+        String senderName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
         Chat chat = new Chat(sender,
                 receiver,
                 senderUid,
                 receiverUid,
                 message,
-                System.currentTimeMillis());
+                System.currentTimeMillis(),senderName);
         if (!Objects.equals(message,"")) {
             mChatPresenter.sendMessage(getActivity().getApplicationContext(), chat, receiverFirebaseToken);
             errorCount = 0;

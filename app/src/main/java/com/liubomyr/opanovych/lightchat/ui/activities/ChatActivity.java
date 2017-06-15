@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.liubomyr.opanovych.lightchat.LightChatMainApp;
 import com.liubomyr.opanovych.lightchat.R;
 import com.liubomyr.opanovych.lightchat.ui.fragments.ChatFragment;
@@ -14,6 +16,7 @@ import com.liubomyr.opanovych.lightchat.utils.Constants;
 
 public class ChatActivity extends AppCompatActivity {
     private Toolbar mToolbar;
+
 
     public static void startActivity(Context context,
                                      String receiver,
@@ -24,6 +27,7 @@ public class ChatActivity extends AppCompatActivity {
         intent.putExtra(Constants.ARG_RECEIVER_UID, receiverUid);
         intent.putExtra(Constants.ARG_FIREBASE_TOKEN, firebaseToken);
         context.startActivity(intent);
+
     }
 
     @Override
